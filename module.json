@@ -7,6 +7,6 @@
   "minimumCoreVersion": "0.8.6",
   "compatibleCoreVersion": ">=0.8.6",
   "scripts": ["engagePlayers.js"],
-  "manifest": "https://assets.forge-vtt.com/6134abd6da52b3fdafaa293c/modules/my-modules/Engage-Players/module.json",
-  "download": "https://assets.forge-vtt.com/6134abd6da52b3fdafaa293c/modules/my-modules/Engage-Players/Engage-Players.zip"
+  "manifest": "https://github.com/jcolegithub/Engage-Players/blob/main/module.json",
+  "download": "https://github.com/jcolegithub/Engage-Players/blob/main/Engage-Players.zip"
 }
