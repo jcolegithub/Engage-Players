@@ -1,40 +1,36 @@
-Hooks.on("updateCombat", async (combat, updateData, options, userId) => {
-    if (!combat.started && !combat.combatants.find(c => c.defeated === false)) return;
 
-    // Get active Game Master
-    let gm = game.users.find(u => u.isGM && u.active);
+
+// engagePlayers.js
+Hooks.once('ready', async function() {
+    console.log("Engage Players module is ready");
+
+    const users = game.users.contents;
+    const gm = users.find(user => user.role === CONST.USER_ROLES.GAMEMASTER);
+
     if (!gm) {
-        console.log("No active Game Master found.");
+        console.error("No Game Master found");
         return;
     }
 
-    // Get next player to engage
-    const nextPlayer = getNextPlayerToEngage();
+    let playerIndex = 0;
+    const players = game.users.players.filter(p => p.active);
 
-    // Send whisper message to GM
-    await ChatMessage.create({
-        user: gm.id,
-        content: `It's time to engage ${nextPlayer.name}!`,
-        whisper: [gm.id],
-        speaker: {
-            alias: "Reminder",
-            // Custom image URL
-            img: "https://assets.forge-vtt.com/6134abd6da52b3fdafaa293c/tokens/all/gm_assistant_token.webp"
-        }
+    Hooks.on('updateActiveUsers', () => {
+        console.log("Active users updated");
+        if (players.length === 0) return;
+        const currentPlayer = players[playerIndex];
+        playerIndex = (playerIndex + 1) % players.length;
+
+        console.log(`Time to engage with ${currentPlayer.name}`);
+
+        ChatMessage.create({
+            content: `Time to engage with ${currentPlayer.name}!`,
+            whisper: [gm.id],
+            speaker: {
+                alias: "Engage Players Reminder"
+            }
+        }, {
+            img: "https://assets.forge-vtt.com/6134abd6da52b3fdafaa293c/tokens/all/gm_assistant_token.webp" // Replace with the correct path to your custom image
+        });
     });
 });
-
-function getNextPlayerToEngage() {
-    // Rotate through the players in a round-robin fashion
-    const players = game.users.players.filter(player => player.active);
-    if (!players.length) return null;
-
-    // Find the next player to engage (simple round-robin)
-    let index = (game.settings.get("engage-players", "lastPlayerIndex") || 0) + 1;
-    if (index >= players.length) index = 0;
-
-    // Save the last engaged player index
-    game.settings.set("engage-players", "lastPlayerIndex", index);
-
-    return players[index].character;
-}

@@ -2,7 +2,7 @@
   "name": "Engage-Players",
   "title": "Engage Players Reminder",
   "description": "A module to remind the GM to engage players in a round-robin fashion.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Jason Coleman",
   "minimumCoreVersion": "0.8.6",
   "compatibleCoreVersion": ">=0.8.6",
