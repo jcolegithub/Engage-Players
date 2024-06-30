@@ -1,36 +1,38 @@
 
-
 // engagePlayers.js
 Hooks.once('ready', async function() {
-    console.log("Engage Players module is ready");
+  console.log("Engage Players module is ready");
 
-    const users = game.users.contents;
-    const gm = users.find(user => user.role === CONST.USER_ROLES.GAMEMASTER);
+  const users = game.users.contents;
+  const gm = users.find(user => user.role === CONST.USER_ROLES.GAMEMASTER);
 
-    if (!gm) {
-        console.error("No Game Master found");
-        return;
-    }
+  if (!gm) {
+    console.error("No Game Master found");
+    return;
+  }
 
-    let playerIndex = 0;
-    const players = game.users.players.filter(p => p.active);
+  let playerIndex = 0;
+  const players = game.users.players.filter(p => p.active);
 
-    Hooks.on('updateActiveUsers', () => {
-        console.log("Active users updated");
-        if (players.length === 0) return;
-        const currentPlayer = players[playerIndex];
-        playerIndex = (playerIndex + 1) % players.length;
+  const FIVE_MINUTES = 1000 * 60 * 5; // Convert 5 minutes to milliseconds
 
-        console.log(`Time to engage with ${currentPlayer.name}`);
+  let intervalId = setInterval(() => {
+    if (players.length === 0) return;
+    const currentPlayer = players[playerIndex];
+    playerIndex = (playerIndex + 1) % players.length;
 
-        ChatMessage.create({
-            content: `Time to engage with ${currentPlayer.name}!`,
-            whisper: [gm.id],
-            speaker: {
-                alias: "Engage Players Reminder"
-            }
-        }, {
-            img: "https://assets.forge-vtt.com/6134abd6da52b3fdafaa293c/tokens/all/gm_assistant_token.webp" // Replace with the correct path to your custom image
-        });
+    console.log(`Time to engage with ${currentPlayer.name}`);
+
+    ChatMessage.create({
+      content: `Time to engage with ${currentPlayer.name}!`,
+      speaker: {
+        alias: "Engage Players Reminder"
+      }
+    }, {
+      img: "tokens/all/gm_assistant_token.webp" // Replace with the actual path to your image
     });
+  }, FIVE_MINUTES);
+
+  // Cleanup function to clear the interval on module unload
+  Hooks.once('module.disable', () => clearInterval(intervalId));
 });
