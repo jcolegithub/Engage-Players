@@ -1,4 +1,3 @@
-
 // engagePlayers.js
 Hooks.once('ready', async function() {
   console.log("Engage Players module is ready");
@@ -27,9 +26,8 @@ Hooks.once('ready', async function() {
       content: `Time to engage with ${currentPlayer.name}!`,
       speaker: {
         alias: "Engage Players Reminder"
-      }
-    }, {
-      img: "tokens/all/gm_assistant_token.webp" // Replace with the actual path to your image
+      },
+      user: game.user.id // Send message only to the GM
     });
   }, FIVE_MINUTES);
 
